@@ -4,19 +4,13 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Match3
 {
-    class ScreenManager
+    public class ScreenManager
     {
-
-        // TO DO : Screen transitions
-        //         StartScreen ->
-        //         -> GameplayScreen ->
-        //         -> GameOverScreen ->
-        //         -> StartScreen
-
         public ContentManager Content { get; private set; }
         public GameScreen CurrentScreen;
         public GraphicsDevice GraphicsDevice;
         public SpriteBatch SpriteBatch;
+        public Cursor Cursor;
 
         private static ScreenManager instance;
         public static ScreenManager Instance
@@ -38,28 +32,33 @@ namespace Match3
         public void LoadContent(ContentManager content)
         {
             Content = new ContentManager(content.ServiceProvider, "Content");
+            Cursor = new Cursor("Sprites/Cursors/cursor");
+            Cursor.Scale = new Vector2(0.8f);
+            Cursor.LoadContent();
+            Cursor.Origin = new Vector2(8.0f, 2.0f);
             CurrentScreen.LoadContent();
         }
 
         public void UnloadContent()
         {
+            Cursor.UnloadContent();
             CurrentScreen.UnloadContent();
         }
 
         public void Update(GameTime gameTime)
         {
-            CurrentScreen.Update(gameTime);
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            CurrentScreen.Draw(spriteBatch);
+            Cursor.Update(gameTime);
+            if (ScreenTransitionManager.Instance.IsActive)
+                ScreenTransitionManager.Instance.Update(gameTime);
+            else
+                CurrentScreen.Update(gameTime);
         }
 
         public void Draw()
         {
             SpriteBatch.Begin();
             CurrentScreen.Draw(SpriteBatch);
+            Cursor.Draw(SpriteBatch);
             SpriteBatch.End();
         }
     }

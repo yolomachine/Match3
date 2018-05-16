@@ -42,6 +42,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Effects\FadeEffect.cs" />
+    <Compile Include="Effects\PulseEffect.cs" />
+    <Compile Include="GUI\Cursor.cs" />
     <Compile Include="GUI\DrawableComponent.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="Gameplay\Logic.cs" />
@@ -55,8 +58,10 @@
     <Compile Include="Screens\GameOverScreen.cs" />
     <Compile Include="Screens\GameplayScreen.cs" />
     <Compile Include="Screens\GameScreen.cs" />
+    <Compile Include="Effects\Effect.cs" />
     <Compile Include="Utils\ScreenManager.cs" />
     <Compile Include="Screens\StartScreen.cs" />
+    <Compile Include="Utils\ScreenTransitionManager.cs" />
     <Compile Include="Utils\Settings.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@ namespace Match3
     public class TextBlock : DrawableComponent
     {
         private SpriteFont font;
+        private bool isOutlineDrawn;
 
         private string text;
         public string Text
@@ -21,10 +22,11 @@ namespace Match3
             }
         }
 
-        public TextBlock(string path, string text) : base()
+        public TextBlock(string path, string text, bool isOutlineDrawn = true) : base()
         {
             font = Content.Load<SpriteFont>(path);
             this.text = text;
+            this.isOutlineDrawn = isOutlineDrawn;
         }
 
         public override void LoadContent()
@@ -47,11 +49,59 @@ namespace Match3
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            if (isOutlineDrawn)
+            {
+                spriteBatch.DrawString(
+                    font,
+                    text,
+                    new Vector2(Position.X + 2f, Position.Y),
+                    Color.Black * Alpha,
+                    Rotation,
+                    Origin,
+                    Scale,
+                    SpriteEffect,
+                    0.0f
+                );
+                spriteBatch.DrawString(
+                    font,
+                    text,
+                    new Vector2(Position.X - 2f, Position.Y),
+                    Color.Black * Alpha,
+                    Rotation,
+                    Origin,
+                    Scale,
+                    SpriteEffect,
+                    0.0f
+                );
+                spriteBatch.DrawString(
+                    font,
+                    text,
+                    new Vector2(Position.X, Position.Y + 2f),
+                    Color.Black * Alpha,
+                    Rotation,
+                    Origin,
+                    Scale,
+                    SpriteEffect,
+                    0.0f
+                );
+                spriteBatch.DrawString(
+                    font,
+                    text,
+                    new Vector2(Position.X, Position.Y - 2f),
+                    Color.Black * Alpha,
+                    Rotation,
+                    Origin,
+                    Scale,
+                    SpriteEffect,
+                    0.0f
+                );
+            }
+
             spriteBatch.DrawString(
                 font,
                 text,
                 Position,
-                Color,
+                Color * Alpha,
                 Rotation,
                 Origin,
                 Scale,

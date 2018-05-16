@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Match3
 {
-    class Button
+    public class Button
     {
         public Texture Texture;
         public TextBlock Caption;

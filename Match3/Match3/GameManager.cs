@@ -20,7 +20,6 @@ namespace Match3
 
         protected override void Initialize()
         {
-            IsMouseVisible = true;
             base.Initialize();
         }
 

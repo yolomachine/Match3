@@ -17,26 +17,38 @@ namespace Match3
         //         int order to embed custom fonts
         //         as a resource
 
-        // TO DO : Add effects such as rotating,
-        //         fading, pulsing, etc.
-
-        public MouseState MouseState;
         public event EventHandler Click;
         public ContentManager Content;
         public RenderTarget2D RenderTarget;
         public Rectangle? SourceRect;
         public Rectangle DestinationRect;
+
         public int Width;
         public int Height;
         public float Alpha;
         public float Rotation;
+
         public Vector2 Position;
-        public Color Color;
-        public Vector2 Scale;
         public Vector2 Origin;
+        public Color Color;
         public SpriteEffects SpriteEffect;
         public bool IsMouseHovering;
         public bool IsMouseClicked;
+
+
+        private Vector2 scale;
+        public Vector2 Scale
+        {
+            get
+            {
+                return scale;
+            }
+            set
+            {
+                scale = value;
+                UpdateDestinationRect();
+            }
+        }
 
         public DrawableComponent()
         {
@@ -55,10 +67,15 @@ namespace Match3
             Content = new ContentManager(ScreenManager.Instance.Content.ServiceProvider, "Content");
         }
 
+        private void UpdateDestinationRect()
+        {
+            DestinationRect = new Rectangle((int)Position.X, (int)Position.Y, (int)(Scale.X * Width), (int)(Scale.Y * Height));
+        }
+        
         public virtual void LoadContent()
         {
+            UpdateDestinationRect();
             Origin = new Vector2(Width / 2, Height / 2);
-            DestinationRect = new Rectangle((int)Position.X, (int)Position.Y, Width, Height);
             RenderTarget = new RenderTarget2D(ScreenManager.Instance.GraphicsDevice, Width, Height);
         }
 
@@ -69,18 +86,28 @@ namespace Match3
 
         public virtual void Update(GameTime gameTime)
         {
-            var previouseMouseState = MouseState;
-            MouseState = Mouse.GetState();
-            var cursorRectangle = new Rectangle(Mouse.GetState().X, Mouse.GetState().Y, 1, 1);
-            var destinationRectangle = new Rectangle(
+            if (Position.X != DestinationRect.X || Position.Y != DestinationRect.Y)
+                UpdateDestinationRect();
+
+            var cursorTargetRectangle = new Rectangle(
                 (int)(DestinationRect.X - Origin.X),
                 (int)(DestinationRect.Y - Origin.Y),
                 DestinationRect.Width,
                 DestinationRect.Height
             );
-            IsMouseHovering = cursorRectangle.Intersects(destinationRectangle) ? true : false;
-            if (MouseState.LeftButton == ButtonState.Released && previouseMouseState.LeftButton == ButtonState.Pressed)
-                Click?.Invoke(this, new EventArgs());
+
+            IsMouseClicked = false;
+            IsMouseHovering = false;
+            if (ScreenManager.Instance.Cursor.Rectangle.Intersects(cursorTargetRectangle))
+            {
+                IsMouseHovering = true;
+                if (ScreenManager.Instance.Cursor.PreviousButtonState == ButtonState.Pressed &&
+                    ScreenManager.Instance.Cursor.CurrentButtonState == ButtonState.Released)
+                {
+                    IsMouseClicked = true;
+                    Click?.Invoke(this, new EventArgs());
+                }
+            }
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)

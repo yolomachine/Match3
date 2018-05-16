@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,10 +9,12 @@ namespace Match3
     public abstract class GameScreen
     {
         protected ContentManager Content;
+        public List<DrawableComponent> ScreenObjects;
 
         public virtual void LoadContent()
         {
             Content = new ContentManager(ScreenManager.Instance.Content.ServiceProvider, "Content");
+            ScreenObjects = new List<DrawableComponent>();
         }
 
         public virtual void UnloadContent()
