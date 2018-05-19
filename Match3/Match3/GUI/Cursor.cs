@@ -46,15 +46,26 @@ namespace Match3
             Position.Y = CurrentMouseState.Y;
 
             if (CurrentButtonState == ButtonState.Pressed)
+            {
+                Position.Y += 1.5f;
                 Rotation = -0.1f;
+            }
             else
+            {
+                Position.Y -= 1.5f;
                 Rotation = 0.0f;
+            }
 
             base.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            if (Position.X < 0 || 
+                Position.Y < -2 ||
+                Position.X > Settings.ViewportWidth ||
+                Position.Y > Settings.ViewportHeight)
+                return;
             base.Draw(spriteBatch);
         }
     }

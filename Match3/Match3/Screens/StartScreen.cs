@@ -6,8 +6,8 @@ namespace Match3
 {
     public class StartScreen : GameScreen
     {
-        Button PlayButton;
-        Texture Background;
+        public Button PlayButton;
+        public Texture Background;
 
         public override void LoadContent()
         {
@@ -54,7 +54,7 @@ namespace Match3
 
         private void PlayButton_Click(object sender, EventArgs e)
         {
-            ScreenTransitionManager.Instance.MakeTransition(new GameOverScreen());
+            ScreenTransitionManager.Instance.MakeTransition(new GameplayScreen());
         }
     }
 }

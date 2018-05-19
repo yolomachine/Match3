@@ -38,6 +38,8 @@ namespace Match3
             Position = position;
         }
 
+        ~Button() { }
+
         public void LoadContent()
         {
             Texture?.LoadContent();

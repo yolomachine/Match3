@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Match3
+﻿namespace Match3
 {
     public abstract class Effect
     {
@@ -19,6 +13,8 @@ namespace Match3
             IsActive = false;
             isReversing = false;
         }
+
+        ~Effect() { }
 
         public virtual void Apply(DrawableComponent component)
         {

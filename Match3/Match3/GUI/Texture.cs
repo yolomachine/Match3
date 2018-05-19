@@ -7,10 +7,23 @@ namespace Match3
     {
         private Texture2D texture;
 
+        public Texture(int width, int height, Color color) : base()
+        {
+            texture = new Texture2D(ScreenManager.Instance.GraphicsDevice, width, height);
+
+            Color = color;
+            Color[] data = new Color[width * height];
+            for (int i = 0; i < data.Length; ++i)
+                data[i] = color;
+            texture.SetData(data);
+        }
+
         public Texture(string path) : base()
         {
             texture = Content.Load<Texture2D>(path);
         }
+
+        ~Texture() { }
 
         public override void LoadContent()
         {

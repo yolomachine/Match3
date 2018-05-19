@@ -67,10 +67,7 @@ namespace Match3
             Content = new ContentManager(ScreenManager.Instance.Content.ServiceProvider, "Content");
         }
 
-        private void UpdateDestinationRect()
-        {
-            DestinationRect = new Rectangle((int)Position.X, (int)Position.Y, (int)(Scale.X * Width), (int)(Scale.Y * Height));
-        }
+        ~DrawableComponent() { }
         
         public virtual void LoadContent()
         {
@@ -113,6 +110,11 @@ namespace Match3
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             ScreenManager.Instance.GraphicsDevice.SetRenderTarget(RenderTarget);
+        }
+
+        private void UpdateDestinationRect()
+        {
+            DestinationRect = new Rectangle((int)Position.X, (int)Position.Y, (int)(Scale.X * Width), (int)(Scale.Y * Height));
         }
     }
 }

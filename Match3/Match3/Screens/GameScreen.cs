@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
@@ -10,6 +9,8 @@ namespace Match3
     {
         protected ContentManager Content;
         public List<DrawableComponent> ScreenObjects;
+
+        ~GameScreen() { }
 
         public virtual void LoadContent()
         {

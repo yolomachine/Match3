@@ -29,6 +29,8 @@ namespace Match3
             this.isOutlineDrawn = isOutlineDrawn;
         }
 
+        ~TextBlock() { }
+
         public override void LoadContent()
         {
             Width = (int)font.MeasureString(text).X;
@@ -88,6 +90,50 @@ namespace Match3
                     font,
                     text,
                     new Vector2(Position.X, Position.Y - 2f),
+                    Color.Black * Alpha,
+                    Rotation,
+                    Origin,
+                    Scale,
+                    SpriteEffect,
+                    0.0f
+                );
+                spriteBatch.DrawString(
+                    font,
+                    text,
+                    new Vector2(Position.X + 1f, Position.Y + 1f),
+                    Color.Black * Alpha,
+                    Rotation,
+                    Origin,
+                    Scale,
+                    SpriteEffect,
+                    0.0f
+                );
+                spriteBatch.DrawString(
+                    font,
+                    text,
+                    new Vector2(Position.X + 1f, Position.Y - 1f),
+                    Color.Black * Alpha,
+                    Rotation,
+                    Origin,
+                    Scale,
+                    SpriteEffect,
+                    0.0f
+                );
+                spriteBatch.DrawString(
+                    font,
+                    text,
+                    new Vector2(Position.X - 1f, Position.Y + 1f),
+                    Color.Black * Alpha,
+                    Rotation,
+                    Origin,
+                    Scale,
+                    SpriteEffect,
+                    0.0f
+                );
+                spriteBatch.DrawString(
+                    font,
+                    text,
+                    new Vector2(Position.X - 1f, Position.Y - 1f),
                     Color.Black * Alpha,
                     Rotation,
                     Origin,
