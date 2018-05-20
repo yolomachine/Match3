@@ -40,7 +40,10 @@ namespace Match3
 
         public void LoadContent()
         {
-            Generate();
+            do
+            {
+                Generate();
+            } while (!MovesAvailable());
 
             Score = new TextBlock("Fonts/GillSans_28", "Score: 0");
             Score.Position = new Vector2(Settings.ScreenCenter.X, 30);
@@ -79,7 +82,7 @@ namespace Match3
             foreach (Tile tile in TileArray)
                 tile.Background.Draw(spriteBatch);
             foreach (Tile tile in TileArray)
-                tile.Figure.Draw(spriteBatch);
+                tile.Figure?.Draw(spriteBatch);
         }
 
         public Tile RandomTile()
@@ -103,6 +106,90 @@ namespace Match3
                     tile.Row = j;
                     TileArray[i, j] = tile;
                 }
+
+            List<List<Tile>> blocks = FindBlocks();
+            while (blocks.Count > 0)
+            {
+                foreach (List<Tile> block in blocks)
+                    foreach(Tile tile in block)
+                    {
+                        TileArray[tile.Col, tile.Row].UnloadContent();
+                        TileArray[tile.Col, tile.Row] = RandomTile();
+                        TileArray[tile.Col, tile.Row].Row = tile.Row;
+                        TileArray[tile.Col, tile.Row].Col = tile.Col;
+                        TileArray[tile.Col, tile.Row].Position = tile.Position;
+                        TileArray[tile.Col, tile.Row].LoadContent();
+                    }
+
+                blocks = FindBlocks();
+            }
+        }
+
+        public bool MovesAvailable()
+        {
+            for (int i = 0; i < Settings.ColsCount; ++i)
+                for (int j = 0; j < Settings.RowsCount - 1; ++j)
+                {
+                    List<List<Tile>> blocks;
+                    SwapTiles(ref TileArray[i, j], ref TileArray[i, j + 1]);
+                    blocks = FindBlocks();
+                    SwapTiles(ref TileArray[i, j], ref TileArray[i, j + 1]);
+                    if (blocks.Count > 0)
+                        return true;
+                }
+
+            for (int j = 0; j < Settings.RowsCount; ++j)
+                for (int i = 0; j < Settings.ColsCount - 1; ++i)
+                {
+                    List<List<Tile>> blocks;
+                    SwapTiles(ref TileArray[i, j], ref TileArray[i + 1, j]);
+                    blocks = FindBlocks();
+                    SwapTiles(ref TileArray[i, j], ref TileArray[i + 1, j]);
+                    if (blocks.Count > 0)
+                        return true;
+                }
+
+            return false;
+        }
+
+        public List<List<Tile>> FindBlocks()
+        {
+            List<List<Tile>> blocks = new List<List<Tile>>();
+            for (int i = 0; i < Settings.ColsCount; ++i)
+            {
+                int blockLength = 1;
+                for (int j = 0; j < Settings.RowsCount; ++j)
+                    if (j < Settings.RowsCount - 1 && TileArray[i, j].GetType() == TileArray[i, j + 1].GetType())
+                        ++blockLength;
+                    else
+                        CheckBlock(ref blocks, ref blockLength, j, i, true);
+            }
+
+            for (int j = 0; j < Settings.RowsCount; ++j)
+            {
+                int blockLength = 1;
+                for (int i = 0; i < Settings.ColsCount; ++i)
+                    if (i < Settings.ColsCount - 1 && TileArray[i, j].GetType() == TileArray[i + 1, j].GetType())
+                        ++blockLength;
+                    else
+                        CheckBlock(ref blocks, ref blockLength, j, i, false);
+            }
+
+            return blocks;
+        }
+
+        public void CheckBlock(ref List<List<Tile>> blocks, ref int blockLength, int row, int col, bool isVertical)
+        {
+            if (blockLength >= 3)
+            {
+                List<Tile> block = new List<Tile>();
+                for (int i = 0; i < blockLength; ++i)
+                    block.Add(TileArray[col - (!isVertical ? i : 0), row - (isVertical ? i : 0)]);
+                blocks.Add(block);
+            }
+
+            blockLength = 1;
+
         }
 
         public bool IsAdjacent(Tile first, Tile second)

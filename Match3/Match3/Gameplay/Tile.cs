@@ -78,7 +78,7 @@ namespace Match3
                 Field.Instance.PreviousSelectedTile = Field.Instance.CurrentSelectedTile;
                 Field.Instance.CurrentSelectedTile = this;
             }
-            Figure.Update(gameTime);
+            Figure?.Update(gameTime);
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)

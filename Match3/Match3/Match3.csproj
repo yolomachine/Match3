@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="Effects\FadeEffect.cs" />
     <Compile Include="Effects\PulseEffect.cs" />
-    <Compile Include="Gameplay\Circle.cs" />
+    <Compile Include="Gameplay\Pearl.cs" />
     <Compile Include="Gameplay\Diamond.cs" />
     <Compile Include="Gameplay\Ruby.cs" />
     <Compile Include="Gameplay\Emerald.cs" />
