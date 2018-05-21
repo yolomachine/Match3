@@ -6,11 +6,11 @@ namespace Match3
 {
     public class GameplayScreen : GameScreen
     {
-        private double previousTime;
-        private double currentTime;
-        private int timeLimit;
-
+        public double PreviousTime;
+        public double CurrentTime;
+        public int TimeLimit;
         public bool IsGameFinished;
+        public TextBlock Score;
         public TextBlock TimerText;
         public Texture TimeRectangle;
         public Texture Background;
@@ -20,13 +20,18 @@ namespace Match3
             base.LoadContent();
             Field.Instance.LoadContent();
 
-            timeLimit = 20;
-            currentTime = timeLimit;
+            TimeLimit = 60;
+            CurrentTime = TimeLimit;
             IsGameFinished = false;
 
             TimeRectangle = new Texture((int)(0.8f * Settings.ViewportWidth), 8, Color.Gold);
             TimeRectangle.Position = new Vector2((int)Settings.ScreenCenter.X, (int)Settings.ViewportHeight - 10);
             TimeRectangle.LoadContent();
+
+            Score = new TextBlock("Fonts/GillSans_32", "SCORE: 0");
+            Score.Color = Color.PaleGoldenrod;
+            Score.Position = new Vector2(Settings.ScreenCenter.X, 30);
+            Score.LoadContent();
 
             TimerText = new TextBlock("Fonts/GillSans_28", "60");
             TimerText.Position = new Vector2(TimeRectangle.Position.X, TimeRectangle.Position.Y - 20.0f);
@@ -37,6 +42,7 @@ namespace Match3
             Background.Position = Settings.ScreenCenter;
             Background.LoadContent();
 
+            ScreenObjects.Add(Score);
             ScreenObjects.Add(TimerText);
             ScreenObjects.Add(Background);
             ScreenObjects.Add(TimeRectangle);
@@ -52,22 +58,22 @@ namespace Match3
         {
             if (IsGameFinished)
             {
-                ScreenTransitionManager.Instance.MakeTransition(new GameOverScreen());
+                ScreenTransitionManager.Instance.MakeTransition(new GameOverScreen(Score));
                 return;
             }
 
-            previousTime = currentTime;
-            currentTime -= gameTime.ElapsedGameTime.TotalSeconds;
+            PreviousTime = CurrentTime;
+            CurrentTime -= gameTime.ElapsedGameTime.TotalSeconds;
 
-            if ((int)previousTime != (int)currentTime)
-                TimerText.Text = Convert.ToInt32(currentTime).ToString();
+            TimerText.Text = Convert.ToInt32(CurrentTime).ToString();
             TimeRectangle.DestinationRect = new Rectangle(
-                new Point((int)(((60.0f - gameTime.ElapsedGameTime.Seconds) / 60.0f) * TimeRectangle.Position.X), (int)TimeRectangle.Position.Y), 
-                new Point((int)((currentTime / timeLimit) * TimeRectangle.Width), TimeRectangle.Height)
+                new Point((int)TimeRectangle.Position.X, (int)TimeRectangle.Position.Y), 
+                new Point((int)((CurrentTime / TimeLimit) * TimeRectangle.Width), TimeRectangle.Height)
             );
-            if (currentTime <= 0.0f)
+            if (CurrentTime <= 0.0f)
                 IsGameFinished = true;
 
+            Score.Update(gameTime);
             Field.Instance.Update(gameTime);
             TimerText.Update(gameTime);
             TimeRectangle.Update(gameTime);
@@ -80,6 +86,7 @@ namespace Match3
             Background.Draw(spriteBatch);
             TimerText.Draw(spriteBatch);
             TimeRectangle.Draw(spriteBatch);
+            Score.Draw(spriteBatch);
             Field.Instance.Draw(spriteBatch);
             base.Draw(spriteBatch);
         }

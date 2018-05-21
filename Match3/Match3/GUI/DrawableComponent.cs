@@ -62,8 +62,6 @@ namespace Match3
             Color = Color.White;
             DestinationRect = Rectangle.Empty;
             SpriteEffect = SpriteEffects.None;
-            IsMouseHovering = false;
-            IsMouseClicked = true;
             Content = new ContentManager(ScreenManager.Instance.Content.ServiceProvider, "Content");
         }
 

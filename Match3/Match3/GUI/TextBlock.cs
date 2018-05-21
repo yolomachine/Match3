@@ -5,6 +5,7 @@ namespace Match3
 {
     public class TextBlock : DrawableComponent
     {
+        private string path;
         private SpriteFont font;
         private bool isOutlineDrawn;
 
@@ -25,13 +26,14 @@ namespace Match3
         public TextBlock(string path, string text, bool isOutlineDrawn = true) : base()
         {
             font = Content.Load<SpriteFont>(path);
+            this.path = path;
             this.text = text;
             this.isOutlineDrawn = isOutlineDrawn;
         }
 
         public TextBlock(TextBlock other) : base(other)
         {
-            font = other.font;
+            font = Content.Load<SpriteFont>(other.path);
             isOutlineDrawn = other.isOutlineDrawn;
             text = other.text;
         }

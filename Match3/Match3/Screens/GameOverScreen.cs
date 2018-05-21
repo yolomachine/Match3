@@ -6,24 +6,32 @@ namespace Match3
 {
     public class GameOverScreen : GameScreen
     {
+        public TextBlock Score;
         public Button OkButton;
         public TextBlock GameOverText;
         public Texture Background;
 
+        public GameOverScreen(TextBlock score) : base()
+        {
+            Score = new TextBlock(score);
+            Score.Position = Settings.ScreenCenter;
+        }
+
         public override void LoadContent()
         {
             base.LoadContent();
+            Score.LoadContent();
 
             OkButton = new Button(
                 new Texture("Sprites/Buttons/button"),
                 new TextBlock("Fonts/GillSans_28", "OK"),
-                new Vector2(Settings.ScreenCenter.X, Settings.ScreenCenter.Y + 50.0f)
+                new Vector2(Settings.ScreenCenter.X, Settings.ScreenCenter.Y + Score.Height + 30.0f)
             );
             OkButton.Texture.Click += OkButton_Click;
             OkButton.LoadContent();
 
-            GameOverText = new TextBlock("Fonts/GillSans_48", "Game Over");
-            GameOverText.Position = new Vector2(Settings.ScreenCenter.X, Settings.ScreenCenter.Y - 50.0f);
+            GameOverText = new TextBlock("Fonts/GillSans_48", "GAME OVER");
+            GameOverText.Position = new Vector2(Settings.ScreenCenter.X, Settings.ScreenCenter.Y - Score.Height - 20.0f);
             GameOverText.Color = Color.Gold;
             GameOverText.LoadContent();
 
@@ -32,6 +40,7 @@ namespace Match3
             Background.Position = Settings.ScreenCenter;
             Background.LoadContent();
 
+            ScreenObjects.Add(Score);
             ScreenObjects.Add(Background);
             ScreenObjects.Add(GameOverText);
             ScreenObjects.Add(OkButton.Texture);
@@ -55,6 +64,7 @@ namespace Match3
             ScreenManager.Instance.GraphicsDevice.Clear(Color.Black);
             Background.Draw(spriteBatch);
             GameOverText.Draw(spriteBatch);
+            Score.Draw(spriteBatch);
             OkButton.Draw(spriteBatch);
         }
 

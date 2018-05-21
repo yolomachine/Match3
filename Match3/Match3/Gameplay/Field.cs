@@ -6,7 +6,7 @@ using System.Linq;
 
 // Attention
 // This part of project contains extremely huge
-// Amount of (consecutive)? loops, if-statements 
+// Amount of (consecutive)? loops, conditional statements 
 // And heavy combat crutches.
 
 namespace Match3
@@ -30,9 +30,9 @@ namespace Match3
         public FieldStates AdditionalState;
 
         public PulseEffect ClickEffect;
+        public FadeEffect RemoveEffect;
         public Tile PreviousSelectedTile;
         public Tile CurrentSelectedTile;
-        public TextBlock Score;
 
         public List<Tile> FadingTiles;
         public List<Tile> MovingTiles;
@@ -73,6 +73,8 @@ namespace Match3
 
             ClickEffect = new PulseEffect(1.0f, 0.015f, 0.8f, 1.0f);
             ClickEffect.IsPeriodic = true;
+
+            RemoveEffect = new FadeEffect(1.0f, 0.1f);
         }
 
         ~Field() { }
@@ -89,10 +91,6 @@ namespace Match3
             {
                 Generate();
             } while (!MovesAvailable());
-
-            Score = new TextBlock("Fonts/GillSans_28", "Score: 0");
-            Score.Position = new Vector2(Settings.ScreenCenter.X, 30);
-            Score.LoadContent();
         }
 
         public void UnloadContent()
@@ -102,8 +100,6 @@ namespace Match3
 
         public void Update(GameTime gameTime)
         {
-            Score.Update(gameTime);
-
             // Attention: a handful of brain cells has been sacrificed to Satan
             // In order to make fancy swapping animation work properly;
             // It's time to kick switches and chew bubblegum... and I'm all outta gum
@@ -113,18 +109,25 @@ namespace Match3
                 case FieldStates.RemovingTiles:
                     switch(AdditionalState)
                     {
-                        case FieldStates.RemovingTiles:
-                            RemoveBlocks();
+                        case FieldStates.TilesFading:
+                            if (FadingTiles.Last().Figure.Alpha != 0.0f)
+                                foreach (Tile tile in FadingTiles)
+                                    RemoveEffect.Apply(tile.Figure);
+                            else
+                                AdditionalState = FieldStates.RemovingTiles;
                             break;
 
-                        case FieldStates.TilesFading:
-
+                        case FieldStates.RemovingTiles:
+                            RemoveBlocks();
                             break;
 
                         case FieldStates.TilesStoppedMoving:
                             FillTiles();
                             if (FindBlocks().Count > 0)
-                                AdditionalState = FieldStates.RemovingTiles;
+                            {
+                                BlocksFadeout();
+                                AdditionalState = FieldStates.TilesFading;
+                            }
                             else if (MovesAvailable())
                                 MainState = AdditionalState = FieldStates.Idle;
                             else
@@ -151,7 +154,8 @@ namespace Match3
                             }
                             else
                             {
-                                MainState = AdditionalState = FieldStates.RemovingTiles;
+                                BlocksFadeout();
+                                MainState = FieldStates.RemovingTiles;
                                 CurrentSelectedTile = PreviousSelectedTile = null;
                             }
                             break;
@@ -192,20 +196,19 @@ namespace Match3
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            Score.Draw(spriteBatch);
             foreach (Tile tile in TileArray)
                 tile.Background?.Draw(spriteBatch);
             foreach (Tile tile in TileArray)
                 tile.Figure?.Draw(spriteBatch);
         }
 
-        public Tile RandomTile()
+        private Tile RandomTile()
         {
             Type[] classes = TileClasses.Select(x => x.GetType()).ToArray();
             return Activator.CreateInstance(classes[Random.Next(0, classes.Length)]) as Tile;
         }
 
-        public void Generate()
+        private void Generate()
         {
             TileArray = new Tile[Settings.ColsCount, Settings.RowsCount];
             for (int i = 0; i < Settings.ColsCount; ++i)
@@ -228,7 +231,7 @@ namespace Match3
                         Replace(ref TileArray[tile.Col, tile.Row], RandomTile());
         }
 
-        public void Replace(ref Tile oldTile, Tile newTile)
+        private void Replace(ref Tile oldTile, Tile newTile)
         {
             int row = oldTile.Row;
             int col= oldTile.Col;
@@ -242,7 +245,7 @@ namespace Match3
 
         }
 
-        public bool MovesAvailable()
+        private bool MovesAvailable()
         {
             for (int i = 0; i < Settings.ColsCount; ++i)
                 for (int j = 0; j < Settings.RowsCount - 1; ++j)
@@ -269,7 +272,7 @@ namespace Match3
             return false;
         }
 
-        public void FillTiles()
+        private void FillTiles()
         {
             for (int i = 0; i < Settings.ColsCount; ++i)
                 for (int j = 0; j < Settings.RowsCount; ++j)
@@ -277,17 +280,10 @@ namespace Match3
                         Replace(ref TileArray[i, j], RandomTile());
         }
 
-        public Tile FindFirstAbove(int col, int row)
+        private void BlocksFadeout()
         {
-            for (int i = row - 1; i >= 0; --i)
-                if (TileArray[col, i].Figure != null)
-                    return TileArray[col, i].Copy;
+            AdditionalState = FieldStates.TilesFading;
 
-            return null;
-        }
-
-        public void BlocksFadeout()
-        {
             List<List<Tile>> blocks = FindBlocks();
             foreach (List<Tile> block in blocks)
                 foreach (Tile tile in block)
@@ -297,17 +293,31 @@ namespace Match3
                 }
         }
 
-        public void RemoveBlocks()
+        private Tile FindFirstAbove(int col, int row)
+        {
+            for (int i = row - 1; i >= 0; --i)
+                if (TileArray[col, i].Figure != null)
+                    return TileArray[col, i].Copy;
+
+            return null;
+        }
+
+        private void RemoveBlocks()
         {
             List<List<Tile>> blocks = FindBlocks();
             foreach (List<Tile> block in blocks)
                 foreach (Tile tile in block)
                 {
-                    ++score;
+                    if (FadingTiles.Count > 0)
+                        FadingTiles.Remove(tile);
                     TileArray[tile.Col, tile.Row].Figure = null;
                 }
 
-            Score.Text = "Score: " + (10 * score).ToString();
+            ((GameplayScreen)ScreenManager.Instance.CurrentScreen).CurrentTime += 1;
+            if (((GameplayScreen)ScreenManager.Instance.CurrentScreen).CurrentTime > ((GameplayScreen)ScreenManager.Instance.CurrentScreen).TimeLimit)
+                ((GameplayScreen)ScreenManager.Instance.CurrentScreen).CurrentTime = ((GameplayScreen)ScreenManager.Instance.CurrentScreen).TimeLimit;
+
+            ((GameplayScreen)ScreenManager.Instance.CurrentScreen).Score.Text = "SCORE: " + (10 * score).ToString();
             AdditionalState = FieldStates.TilesStoppedMoving;
 
             for (int i = Settings.ColsCount - 1; i >= 0; --i)
@@ -328,7 +338,7 @@ namespace Match3
                     }
         }
 
-        public List<List<Tile>> FindBlocks()
+        private List<List<Tile>> FindBlocks()
         {
             List<List<Tile>> blocks = new List<List<Tile>>();
 
@@ -357,7 +367,7 @@ namespace Match3
             return blocks;
         }
 
-        public void CheckBlock(ref List<List<Tile>> blocks, ref int blockLength, int row, int col, bool isVertical)
+        private void CheckBlock(ref List<List<Tile>> blocks, ref int blockLength, int row, int col, bool isVertical)
         {
             if (blockLength >= 3)
             {
@@ -371,7 +381,7 @@ namespace Match3
 
         }
 
-        public bool IsAdjacent(Tile first, Tile second)
+        private bool IsAdjacent(Tile first, Tile second)
         {
             return
                 (first.Position.X == second.Position.X &&
@@ -381,7 +391,7 @@ namespace Match3
 
         }
 
-        public void SwapTiles(ref Tile first, ref Tile second)
+        private void SwapTiles(ref Tile first, ref Tile second)
         {
             Swap(ref TileArray[first.Col, first.Row], ref TileArray[second.Col, second.Row]);
             Swap(ref first.Background.Position, ref second.Background.Position);

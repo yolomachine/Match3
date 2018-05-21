@@ -67,16 +67,13 @@ namespace Match3
             IsMoving = other.IsMoving;
             targetPosition = other.targetPosition;
 
-            Background.LoadContent();
-            Figure.LoadContent();
+            LoadContent();
         }
 
         ~Tile() { }
 
         public virtual void LoadContent()
         {
-            IsMoving = false;
-
             Background.LoadContent();
             Figure.LoadContent();
 
