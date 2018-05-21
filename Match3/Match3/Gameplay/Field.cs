@@ -86,6 +86,7 @@ namespace Match3
             AdditionalState = FieldStates.Idle;
             MovingTiles = new List<Tile>();
             FadingTiles = new List<Tile>();
+            CurrentSelectedTile = PreviousSelectedTile = null;
 
             do
             {
