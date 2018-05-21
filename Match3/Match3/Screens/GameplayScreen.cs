@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using System;
 
 namespace Match3
@@ -14,11 +15,15 @@ namespace Match3
         public TextBlock TimerText;
         public Texture TimeRectangle;
         public Texture Background;
+        public Song Song;
 
         public override void LoadContent()
         {
             base.LoadContent();
             Field.Instance.LoadContent();
+
+            Song = Content.Load<Song>("Music/gameplay");
+            MediaPlayer.Play(Song);
 
             TimeLimit = 60;
             CurrentTime = TimeLimit;
@@ -50,6 +55,7 @@ namespace Match3
 
         public override void UnloadContent()
         {
+            Song = null;
             Field.Instance.UnloadContent();
             base.UnloadContent();
         }
@@ -61,6 +67,10 @@ namespace Match3
                 ScreenTransitionManager.Instance.MakeTransition(new GameOverScreen(Score));
                 return;
             }
+
+            // For every 0x5f375a86 we learn about, there are thousands we never see
+            if (MediaPlayer.State == MediaState.Stopped)
+                MediaPlayer.Play(Song, new TimeSpan(27105999));
 
             PreviousTime = CurrentTime;
             CurrentTime -= gameTime.ElapsedGameTime.TotalSeconds;

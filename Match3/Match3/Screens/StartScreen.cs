@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 
 namespace Match3
 {
@@ -8,10 +9,14 @@ namespace Match3
     {
         public Button PlayButton;
         public Texture Background;
+        public Song Song;
 
         public override void LoadContent()
         {
             base.LoadContent();
+
+            Song = Content.Load<Song>("Music/start");
+            MediaPlayer.Play(Song);
 
             PlayButton = new Button(
                 new Texture("Sprites/Buttons/button"), 
@@ -33,11 +38,16 @@ namespace Match3
 
         public override void UnloadContent()
         {
+            Song = null;
             base.UnloadContent();
         }
 
         public override void Update(GameTime gameTime)
         {
+            // I'm not a sound specialist after all
+            if (MediaPlayer.State == MediaState.Stopped)
+                MediaPlayer.Play(Song, new TimeSpan(147009999));
+
             PlayButton.Caption.Color = PlayButton.Texture.IsMouseHovering ? Color.PaleGoldenrod : Color.White;
             PlayButton.Update(gameTime);
             base.Update(gameTime);

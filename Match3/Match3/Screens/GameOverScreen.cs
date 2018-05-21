@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using System;
 
 namespace Match3
@@ -10,6 +11,7 @@ namespace Match3
         public Button OkButton;
         public TextBlock GameOverText;
         public Texture Background;
+        public Song Song;
 
         public GameOverScreen(TextBlock score) : base()
         {
@@ -21,6 +23,9 @@ namespace Match3
         {
             base.LoadContent();
             Score.LoadContent();
+
+            Song = Content.Load<Song>("Music/gameover");
+            MediaPlayer.Play(Song);
 
             OkButton = new Button(
                 new Texture("Sprites/Buttons/button"),
@@ -49,6 +54,7 @@ namespace Match3
 
         public override void UnloadContent()
         {
+            Song = null;
             base.UnloadContent();
         }
 
