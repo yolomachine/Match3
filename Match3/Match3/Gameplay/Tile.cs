@@ -6,6 +6,7 @@ namespace Match3
 {
     public abstract class Tile
     {
+        private int movementSpeed;
         private Vector2 targetPosition;
 
         public Texture Background;
@@ -43,10 +44,31 @@ namespace Match3
             }
         }
 
+        public Tile Copy
+        {
+            get
+            {
+                return Activator.CreateInstance(GetType(), this) as Tile;
+            }
+        }
+
         public Tile(string path)
         {
             Background = new Texture("Sprites/Figures/background");
             Figure = new Texture(path);
+        }
+
+        public Tile(Tile other)
+        {
+            Background = new Texture(other.Background);
+            Figure = new Texture(other.Figure);
+            Row = other.Row;
+            Col = other.Col;
+            IsMoving = other.IsMoving;
+            targetPosition = other.targetPosition;
+
+            Background.LoadContent();
+            Figure.LoadContent();
         }
 
         ~Tile() { }
@@ -73,7 +95,8 @@ namespace Match3
             Background.Update(gameTime);
             if (IsMoving)
                 MoveTo(targetPosition);
-            else if (Background.IsMouseClicked)
+            else if (Background.IsMouseClicked && 
+                Field.Instance.MainState == FieldStates.Idle)
             {
                 Field.Instance.PreviousSelectedTile = Field.Instance.CurrentSelectedTile;
                 Field.Instance.CurrentSelectedTile = this;
@@ -91,20 +114,25 @@ namespace Match3
         {
             if (position == Figure.Position)
             {
+                Field.Instance.MovingTiles.Remove(this);
+                if (Field.Instance.MovingTiles.Count == 0)
+                    Field.Instance.AdditionalState = FieldStates.TilesStoppedMoving;
                 IsMoving = false;
                 return;
             }
 
-            int dx = 2 * Math.Sign(position.X - Figure.Position.X);
-            int dy = 2 * Math.Sign(position.Y - Figure.Position.Y);
+            int dx = movementSpeed * Math.Sign(position.X - Figure.Position.X);
+            int dy = movementSpeed * Math.Sign(position.Y - Figure.Position.Y);
 
             Figure.Position.X += dx;
             Figure.Position.Y += dy;
         }
 
-        public void InitiateMoving(Vector2 position)
+        public void InitiateMovement(Vector2 position, int speed = 2)
         {
+            Field.Instance.MovingTiles.Add(this);
             targetPosition = position;
+            movementSpeed = speed;
             IsMoving = true;
         }
     }

@@ -9,6 +9,10 @@ namespace Match3
         {
         }
 
+        public Pearl(Pearl tile) : base(tile)
+        {
+        }
+
         public override void LoadContent()
         {
             base.LoadContent();

@@ -23,6 +23,11 @@ namespace Match3
             texture = Content.Load<Texture2D>(path);
         }
 
+        public Texture(Texture other) : base(other)
+        {
+            texture = other.texture;
+        }
+
         ~Texture() { }
 
         public override void LoadContent()

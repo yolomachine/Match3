@@ -9,6 +9,10 @@ namespace Match3
         {
         }
 
+        public Diamond(Diamond tile) : base(tile)
+        {
+        }
+
         public override void LoadContent()
         {
             base.LoadContent();

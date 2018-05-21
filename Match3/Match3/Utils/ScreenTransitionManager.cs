@@ -61,6 +61,7 @@ namespace Match3
                     targetAlpha = 1.0f;
                     transitionEffect.Speed *= -1;
                     transitionFinished = false;
+                    System.GC.Collect();
                 }
                 else
                     IsActive = false;

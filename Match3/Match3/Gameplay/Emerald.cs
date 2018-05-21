@@ -9,6 +9,10 @@ namespace Match3
         {
         }
 
+        public Emerald(Emerald tile) : base(tile)
+        {
+        }
+
         public override void LoadContent()
         {
             base.LoadContent();

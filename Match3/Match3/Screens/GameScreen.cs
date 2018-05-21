@@ -20,7 +20,10 @@ namespace Match3
 
         public virtual void UnloadContent()
         {
-            Content.Unload();
+            foreach (DrawableComponent component in ScreenObjects)
+                component.UnloadContent();
+            Content.Dispose();
+            Content = null;
         }
 
         public virtual void Update(GameTime gameTime)

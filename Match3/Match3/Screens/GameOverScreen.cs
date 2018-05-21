@@ -40,8 +40,6 @@ namespace Match3
 
         public override void UnloadContent()
         {
-            Background.UnloadContent();
-            OkButton.UnloadContent();
             base.UnloadContent();
         }
 

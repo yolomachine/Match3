@@ -6,11 +6,11 @@ namespace Match3
 {
     public class GameplayScreen : GameScreen
     {
-        private bool isGameFinished;
         private double previousTime;
         private double currentTime;
         private int timeLimit;
 
+        public bool IsGameFinished;
         public TextBlock TimerText;
         public Texture TimeRectangle;
         public Texture Background;
@@ -20,9 +20,9 @@ namespace Match3
             base.LoadContent();
             Field.Instance.LoadContent();
 
-            timeLimit = 60;
+            timeLimit = 20;
             currentTime = timeLimit;
-            isGameFinished = false;
+            IsGameFinished = false;
 
             TimeRectangle = new Texture((int)(0.8f * Settings.ViewportWidth), 8, Color.Gold);
             TimeRectangle.Position = new Vector2((int)Settings.ScreenCenter.X, (int)Settings.ViewportHeight - 10);
@@ -44,12 +44,13 @@ namespace Match3
 
         public override void UnloadContent()
         {
+            Field.Instance.UnloadContent();
             base.UnloadContent();
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (isGameFinished)
+            if (IsGameFinished)
             {
                 ScreenTransitionManager.Instance.MakeTransition(new GameOverScreen());
                 return;
@@ -65,7 +66,7 @@ namespace Match3
                 new Point((int)((currentTime / timeLimit) * TimeRectangle.Width), TimeRectangle.Height)
             );
             if (currentTime <= 0.0f)
-                isGameFinished = true;
+                IsGameFinished = true;
 
             Field.Instance.Update(gameTime);
             TimerText.Update(gameTime);

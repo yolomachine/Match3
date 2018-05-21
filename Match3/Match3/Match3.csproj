@@ -52,7 +52,6 @@
     <Compile Include="GUI\Cursor.cs" />
     <Compile Include="GUI\DrawableComponent.cs" />
     <Compile Include="GameManager.cs" />
-    <Compile Include="Gameplay\Logic.cs" />
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\TextBlock.cs" />
     <Compile Include="GUI\Texture.cs" />

@@ -9,6 +9,10 @@ namespace Match3
         {
         }
 
+        public Mountain(Mountain tile) : base(tile)
+        {
+        }
+
         public override void LoadContent()
         {
             base.LoadContent();

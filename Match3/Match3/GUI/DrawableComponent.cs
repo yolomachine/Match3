@@ -67,6 +67,20 @@ namespace Match3
             Content = new ContentManager(ScreenManager.Instance.Content.ServiceProvider, "Content");
         }
 
+        public DrawableComponent(DrawableComponent other)
+        {
+            Width = other.Width;
+            Height = other.Height;
+            Alpha = other.Alpha;
+            Rotation = other.Rotation;
+            Position = other.Position;
+            Scale = other.Scale;
+            Origin = other.Origin;
+            Color = other.Color;
+            SpriteEffect = other.SpriteEffect;
+            Content = new ContentManager(other.Content.ServiceProvider, "Content");
+        }
+
         ~DrawableComponent() { }
         
         public virtual void LoadContent()
@@ -78,7 +92,8 @@ namespace Match3
 
         public virtual void UnloadContent()
         {
-            Content.Unload();
+            Content.Dispose();
+            Content = null;
         }
 
         public virtual void Update(GameTime gameTime)

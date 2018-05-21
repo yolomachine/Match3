@@ -29,6 +29,13 @@ namespace Match3
             this.isOutlineDrawn = isOutlineDrawn;
         }
 
+        public TextBlock(TextBlock other) : base(other)
+        {
+            font = other.font;
+            isOutlineDrawn = other.isOutlineDrawn;
+            text = other.text;
+        }
+
         ~TextBlock() { }
 
         public override void LoadContent()
